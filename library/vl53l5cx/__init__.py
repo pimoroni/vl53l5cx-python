@@ -1,6 +1,8 @@
 
 import time
 import math
+import sysconfig
+import pathlib
 from smbus2 import SMBus, i2c_msg
 from ctypes import CDLL, CFUNCTYPE, POINTER, Structure, pointer, byref, c_int, c_uint, c_int8, c_uint8, c_int16, c_uint16, c_uint32
 
@@ -10,7 +12,17 @@ _I2C_RD_FUNC = CFUNCTYPE(c_int, c_uint8, c_uint16, POINTER(c_uint8), c_uint32)
 _I2C_WR_FUNC = CFUNCTYPE(c_int, c_uint8, c_uint16, POINTER(c_uint8), c_uint32)
 _SLEEP_FUNC = CFUNCTYPE(c_int, c_uint32)
 
-_VL53 = CDLL("build/libVL53L5CX_python.so")
+# Path to the library dir
+_PATH = pathlib.Path(__file__).parent.parent.absolute()
+
+# System OS/Arch dependent module name suffix
+_SUFFIX = sysconfig.get_config_var('EXT_SUFFIX')
+
+# Library name
+_NAME = pathlib.Path("vl53l5cx_python").with_suffix(_SUFFIX)
+
+# Load the DLL
+_VL53 = CDLL(_PATH / _NAME)
 
 
 class VL53L5CX_MotionData(Structure):

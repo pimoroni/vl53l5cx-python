@@ -1,0 +1,4 @@
+recursive-include src *.c *.h
+recursive-include vl53l5cx *py
+include README.md
+include CHANGELOG.txt
