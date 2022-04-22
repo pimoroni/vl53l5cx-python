@@ -54,6 +54,9 @@ class VL53L5CX_ResultsData(Structure):
 
 class VL53L5CX:
     def __init__(self, i2c_addr=0x29):
+        self._configuration = None
+        self._motion_configuration = None
+
         def _i2c_read(address, reg, data_p, length):
             #print(f"read {address} {reg:04x} {length}")
             msg_w = i2c_msg.write(address, [reg >> 8, reg & 0xff])
@@ -93,7 +96,21 @@ class VL53L5CX:
         self._i2c_wr_func = _I2C_WR_FUNC(_i2c_write)
         self._sleep_func = _SLEEP_FUNC(_sleep)
         self._configuration = _VL53.get_configuration(i2c_addr, self._i2c_rd_func, self._i2c_wr_func, self._sleep_func)
-        _VL53.vl53l5cx_init(self._configuration)
+        if _VL53.vl53l5cx_is_alive(self._configuration) != 0:
+            raise RuntimeError(f"VL53L5CX not detected on 0x{i2c_addr:02x}")
+
+        status = _VL53.vl53l5cx_init(self._configuration)
+
+    def __del__(self):
+        if self._configuration:
+            _VL53.cleaup_configuration(self._configuration)
+        if self._motion_configuration:
+            _VL53.cleanup_motion_configuration(self._motion_configuration)
+
+    def enable_motion_indicator(self, resolution=64):
+        if self._motion_configuration is None:
+            self._motion_configuration = _VL53.get_motion_configuration()
+        return _VL53.vl53l5cx_motion_indicator_init(self._configuration, self._motion_configuration, resolution) == 0
 
     def start_ranging(self):
         _VL53.vl53l5cx_start_ranging(self._configuration)
