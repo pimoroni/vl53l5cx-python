@@ -117,9 +117,9 @@ uint8_t Reset_Sensor(
 		VL53L5CX_Platform *p_platform)
 {
 	uint8_t status = 0;
-	
+
 	/* (Optional) Need to be implemented by customer. This function returns 0 if OK */
-	
+
 	/* Set pin LPN to LOW */
 	/* Set pin AVDD to LOW */
 	/* Set pin VDDIO  to LOW */
@@ -138,21 +138,21 @@ void SwapBuffer(
 		uint16_t 	 	 size)
 {
 	uint32_t i, tmp;
-	
+
 	/*for(auto i = 0u; i < size / 4u; i++) {
 		uint32_t *dword = &((uint32_t *)buffer)[i];
 		*dword = __builtin_bswap32(*dword);
 	}*/
 
 	/* Example of possible implementation using <string.h> */
-	for(i = 0; i < size; i = i + 4) 
+	for(i = 0; i < size; i = i + 4)
 	{
 		tmp = (
 		  buffer[i]<<24)
 		|(buffer[i+1]<<16)
 		|(buffer[i+2]<<8)
 		|(buffer[i+3]);
-		
+
 		memcpy(&(buffer[i]), &tmp, 4);
 	}
 }

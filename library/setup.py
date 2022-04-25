@@ -16,17 +16,4 @@ extension = Extension(
 	             'vl53l5cx_module.cpp'])
 
 
-setup(
-        name='VL53L5CX',
-        version='0.0.1',
-        description='VL53L5CX distance sensor driver',
-        maintainer='Phil Howard',
-        maintainer_email='phil@pimoroni.com',
-        url='https://github.com/pimoroni/vl53l5cx-python',
-        long_description='',
-        long_description_content_type='text/markdown',
-        ext_modules=[extension],
-        packages=['vl53l5cx'],
-        requires=['smbus2'],
-        install_requires=['smbus2'])
-
+setup(ext_modules=[extension])

@@ -6,6 +6,9 @@ import pathlib
 from smbus2 import SMBus, i2c_msg
 from ctypes import CDLL, CFUNCTYPE, POINTER, Structure, pointer, byref, c_int, c_uint, c_int8, c_uint8, c_int16, c_uint16, c_uint32
 
+
+__version__ = '0.0.1'
+
 _I2C_CHUNK_SIZE = 2048
 
 _I2C_RD_FUNC = CFUNCTYPE(c_int, c_uint8, c_uint16, POINTER(c_uint8), c_uint32)
