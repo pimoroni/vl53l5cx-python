@@ -112,6 +112,15 @@ class VL53L5CX:
             self._motion_configuration = _VL53.get_motion_configuration()
         return _VL53.vl53l5cx_motion_indicator_init(self._configuration, self._motion_configuration, resolution) == 0
 
+    def set_motion_distance(self, distance_min, distance_max):
+        if self._motion_configuration is None:
+            raise RuntimeError("Enable motion first.")
+        if distance_min < 400:
+            raise ValueError("distance_min must be >= 400mm")
+        if distance_max - distance_min > 1500:
+            raise ValueErorr("distance between distance_min and distance_max must be < 1500mm")
+        return _VL53.vl53l5cx_motion_indicator_set_distance_motion(self._configuration, self._motion_configuration, distance_min, distance_max)
+
     def start_ranging(self):
         _VL53.vl53l5cx_start_ranging(self._configuration)
 
