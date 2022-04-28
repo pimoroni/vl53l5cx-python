@@ -1,4 +1,6 @@
-recursive-include src *.c *.h
+recursive-include src/VL53L5CX_ULD_API *.c *.h
+include platform.h
+include platform.c
 recursive-include vl53l5cx *py
 include README.md
 include CHANGELOG.txt
