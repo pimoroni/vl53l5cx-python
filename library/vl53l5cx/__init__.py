@@ -61,7 +61,6 @@ class VL53L5CX:
         self._motion_configuration = None
 
         def _i2c_read(address, reg, data_p, length):
-            #print(f"read {address} {reg:04x} {length}")
             msg_w = i2c_msg.write(address, [reg >> 8, reg & 0xff])
             msg_r = i2c_msg.read(address, length)
             self._i2c.i2c_rdwr(msg_w, msg_r)
@@ -72,7 +71,6 @@ class VL53L5CX:
             return 0
 
         def _i2c_write(address, reg, data_p, length):
-            #print(f"write {address} {reg:04x} {length}")
             # Copy the ctypes pointer data into a Python list
             data = []
             for i in range(length):
@@ -84,13 +82,11 @@ class VL53L5CX:
             for offset in range(0, length, _I2C_CHUNK_SIZE):
                 chunk = data[offset:offset + _I2C_CHUNK_SIZE]
                 msg_w = i2c_msg.write(address, [(reg + offset) >> 8, (reg + offset) & 0xff] + chunk)
-                #print(f"chunk {current_chunk} of {chunks} ({_I2C_CHUNK_SIZE} bytes)")
                 self._i2c.i2c_rdwr(msg_w)
 
             return 0
 
         def _sleep(ms):
-            #print(f"sleep {ms}ms")
             time.sleep(ms / 1000.0)
             return 0
 

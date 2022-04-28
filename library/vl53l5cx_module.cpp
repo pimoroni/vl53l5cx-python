@@ -34,7 +34,7 @@ extern "C" {
 
 	VL53L5CX_Configuration* get_configuration(uint8_t i2c_addr, i2c_read_func i2c_read, i2c_write_func i2c_write, sleep_func sleep_ms) {
 		VL53L5CX_Configuration *configuration = new VL53L5CX_Configuration{
-			.platform = VL53L5CX_Platform{
+			.platform = {
 				.address = i2c_addr,
 				.i2c_read = i2c_read,
 				.i2c_write = i2c_write,

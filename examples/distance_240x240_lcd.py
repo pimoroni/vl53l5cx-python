@@ -2,7 +2,7 @@ import time
 import vl53l5cx
 import ST7789
 import numpy
-from PIL import Image
+from PIL import Image, ImageFilter
 from matplotlib import cm
 
 
@@ -29,8 +29,10 @@ display = ST7789.ST7789(
 pal = get_palette("plasma")
 
 vl53 = vl53l5cx.VL53L5CX()
-vl53.set_resolution(8*8)
-vl53.set_ranging_frequency_hz(10)
+vl53.set_resolution(8 * 8)
+
+# This is a visual demo, so prefer speed over accuracy
+vl53.set_ranging_frequency_hz(15)
 vl53.set_integration_time_ms(5)
 vl53.start_ranging()
 
@@ -39,14 +41,32 @@ while True:
     if vl53.data_ready():
         data = vl53.get_data()
         arr = numpy.flipud(numpy.array(data.distance_mm).reshape((8, 8))).astype('float64')
-        arr *= (255.0 / arr.max())
+
+        # Scale view relative to the furthest distance
+        # distance = arr.max()
+
+        # Scale view to a fixed distance
+        distance = 512
+
+        # Scale and clip the result to 0-255
+        arr *= (255.0 / distance)
+        arr = numpy.clip(arr, 0, 255)
+
         # Invert the array : 0 - 255 becomes 255 - 0
         arr *= -1
         arr += 255.0
+
         # Force to int
         arr = arr.astype('uint8')
+
+        # Convert to a palette type image
         img = Image.frombytes("P", (8, 8), arr)
-        img = img.resize((240, 240))
         img.putpalette(pal)
+        img = img.convert("RGB")
+        img = img.resize((240, 240), resample=Image.NEAREST)
+        # img = img.filter(ImageFilter.DETAIL)
+
+        # Display the result
         display.display(img)
-    time.sleep(0.1)
+
+    time.sleep(0.01) # Avoid polling *too* fast
