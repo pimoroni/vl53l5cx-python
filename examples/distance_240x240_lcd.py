@@ -8,8 +8,19 @@ from PIL import Image
 from matplotlib import cm
 
 
+COLOR_MAP = "plasma"
+INVERSE = True
+
+
 def get_palette(name):
-    arr = numpy.array(cm.get_cmap(name, 256).colors * 255).astype('uint8')
+    cmap = cm.get_cmap(name, 256)
+
+    try:
+        colors = cmap.colors
+    except AttributeError:
+        colors = numpy.array([cmap(i) for i in range(256)], dtype=float)
+
+    arr = numpy.array(colors * 255).astype('uint8')
     arr = arr.reshape((16, 16, 4))
     arr = arr[:, :, 0:3]
     return arr.tobytes()
@@ -28,14 +39,14 @@ display = ST7789.ST7789(
     offset_top=0
 )
 
-pal = get_palette("plasma")
+pal = get_palette(COLOR_MAP)
 
 vl53 = vl53l5cx.VL53L5CX()
 vl53.set_resolution(8 * 8)
 
 # This is a visual demo, so prefer speed over accuracy
 vl53.set_ranging_frequency_hz(15)
-vl53.set_integration_time_ms(5)
+vl53.set_integration_time_ms(20)
 vl53.start_ranging()
 
 
@@ -55,8 +66,9 @@ while True:
         arr = numpy.clip(arr, 0, 255)
 
         # Invert the array : 0 - 255 becomes 255 - 0
-        arr *= -1
-        arr += 255.0
+        if INVERSE:
+            arr *= -1
+            arr += 255.0
 
         # Force to int
         arr = arr.astype('uint8')
