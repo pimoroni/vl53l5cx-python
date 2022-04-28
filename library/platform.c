@@ -68,7 +68,7 @@ uint8_t RdByte(
 		uint16_t RegisterAddress,
 		uint8_t *p_value)
 {
-	if (p_platform->i2c_read && p_platform->i2c_read(p_platform->address, RegisterAddress, p_value, 1) == 0) {
+	if (p_platform->i2c_read && p_platform->i2c_read(p_platform->address >> 1, RegisterAddress, p_value, 1) == 0) {
 		return 0;
 	}
 
@@ -80,7 +80,7 @@ uint8_t WrByte(
 		uint16_t RegisterAddress,
 		uint8_t value)
 {
-	if (p_platform->i2c_write && p_platform->i2c_write(p_platform->address, RegisterAddress, &value, 1) == 0) {
+	if (p_platform->i2c_write && p_platform->i2c_write(p_platform->address >> 1, RegisterAddress, &value, 1) == 0) {
 		return 0;
 	}
 
@@ -93,7 +93,7 @@ uint8_t WrMulti(
 		uint8_t *p_values,
 		uint32_t size)
 {
-	if (p_platform->i2c_write && p_platform->i2c_write(p_platform->address, RegisterAddress, p_values, size) == 0) {
+	if (p_platform->i2c_write && p_platform->i2c_write(p_platform->address >> 1, RegisterAddress, p_values, size) == 0) {
 		return 0;
 	}
 
@@ -106,7 +106,7 @@ uint8_t RdMulti(
 		uint8_t *p_values,
 		uint32_t size)
 {
-	if (p_platform->i2c_read && p_platform->i2c_read(p_platform->address, RegisterAddress, p_values, size) == 0) {
+	if (p_platform->i2c_read && p_platform->i2c_read(p_platform->address >> 1, RegisterAddress, p_values, size) == 0) {
 		return 0;
 	}
 

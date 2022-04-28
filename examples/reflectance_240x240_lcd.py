@@ -1,8 +1,10 @@
+#!/usr/bin/env python3
+
 import time
 import vl53l5cx
 import ST7789
 import numpy
-from PIL import Image, ImageFilter
+from PIL import Image
 from matplotlib import cm
 
 
@@ -54,9 +56,8 @@ while True:
         img.putpalette(pal)
         img = img.convert("RGB")
         img = img.resize((240, 240), resample=Image.NEAREST)
-        # img = img.filter(ImageFilter.DETAIL)
 
         # Display the result
         display.display(img)
 
-    time.sleep(0.01) # Avoid polling *too* fast
+    time.sleep(0.01)  # Avoid polling *too* fast
