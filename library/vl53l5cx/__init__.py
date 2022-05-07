@@ -122,7 +122,7 @@ class VL53L5CX:
         self._sleep_func = _SLEEP_FUNC(_sleep)
         self._configuration = _VL53.get_configuration(i2c_addr << 1, self._i2c_rd_func, self._i2c_wr_func, self._sleep_func)
 
-        if _VL53.vl53l5cx_is_alive(self._configuration) != 0:
+        if not self.is_alive():
             raise RuntimeError(f"VL53L5CX not detected on 0x{i2c_addr:02x}")
 
         if not skip_init:
@@ -172,7 +172,9 @@ class VL53L5CX:
         Attempts to read and validate device and revision IDs from the sensor.
 
         """
-        return _VL53.vl53l5cx_is_alive(self._configuration) == STATUS_OK
+        is_alive = c_int(0)
+        status =  _VL53.vl53l5cx_is_alive(self._configuration, byref(is_alive))
+        return status == STATUS_OK and is_alive.value == 1
 
     def start_ranging(self):
         """Start ranging."""
