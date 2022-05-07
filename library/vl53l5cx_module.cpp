@@ -1,5 +1,3 @@
-#include <cstdlib>
-
 extern "C" {
 	#include "vl53l5cx_api.h"
 	#include "vl53l5cx_plugin_motion_indicator.h"
@@ -35,37 +33,29 @@ extern "C" {
 	};
 
 	VL53L5CX_Configuration* get_configuration(uint8_t i2c_addr, i2c_read_func i2c_read, i2c_write_func i2c_write, sleep_func sleep_ms) {
-		VL53L5CX_Configuration *configuration = (VL53L5CX_Configuration *)malloc(sizeof(VL53L5CX_Configuration));
-		configuration->platform.address = i2c_addr;
-		configuration->platform.i2c_read = i2c_read;
-		configuration->platform.i2c_write = i2c_write;
-		configuration->platform.sleep = sleep_ms;
-		/*VL53L5CX_Configuration *configuration = new VL53L5CX_Configuration{
+		VL53L5CX_Configuration *configuration = new VL53L5CX_Configuration{
 			.platform = {
 				.address = i2c_addr,
 				.i2c_read = i2c_read,
 				.i2c_write = i2c_write,
 				.sleep = sleep_ms
 			},
-		};*/
+		};
 		return configuration;
 	}
 
 	void cleanup_configuration(VL53L5CX_Configuration *configuration) {
-		free(configuration);
-		//delete configuration;
+		delete configuration;
 	}
 
 	VL53L5CX_Motion_Configuration* get_motion_configuration() {
-		VL53L5CX_Motion_Configuration *configuration = (VL53L5CX_Motion_Configuration *)malloc(sizeof(VL53L5CX_Motion_Configuration));
-		/*VL53L5CX_Motion_Configuration *configuration = new VL53L5CX_Motion_Configuration{
+		VL53L5CX_Motion_Configuration *configuration = new VL53L5CX_Motion_Configuration{
 
-		};*/
+		};
 		return configuration;
 	}
 
 	void cleanup_motion_configuration(VL53L5CX_Motion_Configuration *motion_configuration) {
-		free(motion_configuration);
-		//delete motion_configuration;
+		delete motion_configuration;
 	}
 }
