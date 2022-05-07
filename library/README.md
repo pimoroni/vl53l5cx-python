@@ -23,6 +23,11 @@ Latest/development library from GitHub:
 
 # Changelog
 
+0.0.2
+-----
+
+* Fix segfault bug in is_alive
+
 0.0.1
 -----
 

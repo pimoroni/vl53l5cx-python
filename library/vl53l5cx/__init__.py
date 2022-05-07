@@ -1,17 +1,16 @@
 
 import time
-import math
 import sysconfig
 import pathlib
 from smbus2 import SMBus, i2c_msg
-from ctypes import CDLL, CFUNCTYPE, POINTER, Structure, pointer, byref, c_int, c_uint, c_int8, c_uint8, c_int16, c_uint16, c_uint32
+from ctypes import CDLL, CFUNCTYPE, POINTER, Structure, byref, c_int, c_int8, c_uint8, c_int16, c_uint16, c_uint32
 
 
-__version__ = '0.0.1'
+__version__ = '0.0.2'
 
 DEFAULT_I2C_ADDRESS = 0x29
 
-RESOLUTION_4X4 = 16 # For completeness, feels nicer just to use 4*4
+RESOLUTION_4X4 = 16  # For completeness, feels nicer just to use 4*4
 RESOLUTION_8X8 = 64
 
 TARGET_ORDER_CLOSEST = 1
@@ -28,6 +27,22 @@ STATUS_TIMEOUT = 1
 STATUS_MCU_ERROR = 66
 STATUS_INVALID_PARAM = 127
 STATUS_ERROR = 255
+
+STATUS_RANGE_NOT_UPDATED = 0
+STATUS_RANGE_LOW_SIGNAL = 1
+STATUS_RANGE_TARGET_PHASE = 2
+STATUS_RANGE_SIGMA_HIGH = 3
+STATUS_RANGE_TARGET_FAILED = 4
+STATUS_RANGE_VALID = 5
+STATUS_RANGE_NOWRAP = 6
+STATUS_RANGE_RATE_FAILED = 7
+STATUS_RANGE_SIGNAL_RATE_LOW = 8
+STATUS_RANGE_VALID_LARGE_PULSE = 9
+STATUS_RANGE_VALID_NO_TARGET = 10
+STATUS_RANGE_MEASUREMENT_FAILED = 11
+STATUS_RANGE_TARGET_BLURRED = 12
+STATUS_RANGE_TARGET_INCONSISTENT = 13
+STATUS_RANGE_NO_TARGET = 255
 
 _I2C_CHUNK_SIZE = 2048
 
@@ -50,28 +65,28 @@ _VL53 = CDLL(_PATH / _NAME)
 
 class VL53L5CX_MotionData(Structure):
     _fields_ = [
-            ("global_indicator_1", c_uint32),
-            ("global_indicator_2", c_uint32),
-            ("status", c_uint8),
-            ("nb_of_detected_aggregates", c_uint8),
-            ("nb_of_aggregates", c_uint8),
-            ("spare", c_uint8),
-            ("motion", c_uint32 * 32)
+        ("global_indicator_1", c_uint32),
+        ("global_indicator_2", c_uint32),
+        ("status", c_uint8),
+        ("nb_of_detected_aggregates", c_uint8),
+        ("nb_of_aggregates", c_uint8),
+        ("spare", c_uint8),
+        ("motion", c_uint32 * 32)
     ]
 
 
 class VL53L5CX_ResultsData(Structure):
     _fields_ = [
-            ("silicon_temp_degc", c_int8),
-            ("ambient_per_spad", c_uint32 * 64),
-            ("nb_target_detected", c_uint8 * 64),
-            ("nb_spads_enabled", c_uint32 * 64),
-            ("signal_per_spad", c_uint32 * 64),
-            ("range_sigma_mm", c_uint16 * 64),
-            ("distance_mm", c_int16 * 64),
-            ("reflectance", c_uint8 * 64),
-            ("target_status", c_uint8 * 64),
-            ("motion_indicator", VL53L5CX_MotionData)
+        ("silicon_temp_degc", c_int8),
+        ("ambient_per_spad", c_uint32 * 64),
+        ("nb_target_detected", c_uint8 * 64),
+        ("nb_spads_enabled", c_uint32 * 64),
+        ("signal_per_spad", c_uint32 * 64),
+        ("range_sigma_mm", c_uint16 * 64),
+        ("distance_mm", c_int16 * 64),
+        ("reflectance", c_uint8 * 64),
+        ("target_status", c_uint8 * 64),
+        ("motion_indicator", VL53L5CX_MotionData)
     ]
 
 
@@ -101,9 +116,6 @@ class VL53L5CX:
             data = []
             for i in range(length):
                 data.append(data_p[i])
-
-            chunks = math.ceil(length / float(_I2C_CHUNK_SIZE))
-            current_chunk = 1
 
             for offset in range(0, length, _I2C_CHUNK_SIZE):
                 chunk = data[offset:offset + _I2C_CHUNK_SIZE]
@@ -163,7 +175,7 @@ class VL53L5CX:
         if distance_min < 400:
             raise ValueError("distance_min must be >= 400mm")
         if distance_max - distance_min > 1500:
-            raise ValueErorr("distance between distance_min and distance_max must be < 1500mm")
+            raise ValueError("distance between distance_min and distance_max must be < 1500mm")
         return _VL53.vl53l5cx_motion_indicator_set_distance_motion(self._configuration, self._motion_configuration, distance_min, distance_max)
 
     def is_alive(self):
@@ -173,7 +185,7 @@ class VL53L5CX:
 
         """
         is_alive = c_int(0)
-        status =  _VL53.vl53l5cx_is_alive(self._configuration, byref(is_alive))
+        status = _VL53.vl53l5cx_is_alive(self._configuration, byref(is_alive))
         return status == STATUS_OK and is_alive.value == 1
 
     def start_ranging(self):
@@ -262,5 +274,6 @@ class VL53L5CX:
         """Get data."""
         results = VL53L5CX_ResultsData()
         status = _VL53.vl53l5cx_get_ranging_data(self._configuration, byref(results))
+        if status != STATUS_OK:
+            raise RuntimeError("Error reading data.")
         return results
-
