@@ -1,3 +1,3 @@
 [submodule "library/src"]
 	path = library/src
-	url = git@github.com:ST-mirror/VL53L5CX_ULD_driver
+	url = https://github.com/ST-mirror/VL53L5CX_ULD_driver
