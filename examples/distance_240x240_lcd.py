@@ -41,7 +41,9 @@ display = ST7789.ST7789(
 
 pal = get_palette(COLOR_MAP)
 
+print("Uploading firmware, please wait...")
 vl53 = vl53l5cx.VL53L5CX()
+print("Done!")
 vl53.set_resolution(8 * 8)
 
 # This is a visual demo, so prefer speed over accuracy
