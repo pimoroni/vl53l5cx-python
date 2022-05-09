@@ -253,7 +253,7 @@ class VL53L5CX:
 
         Strongest prefers targets with a higher return signal (reflectance) versus Closest preferring targets that are closer.
 
-        :param target_order: Either Strongest (default, TARGET_ORDER_STRONGES) or Closest (TARGET_ORDER_CLOSEST)
+        :param target_order: Either Strongest (default, TARGET_ORDER_STRONGEST) or Closest (TARGET_ORDER_CLOSEST)
 
         """
         _VL53.vl53l5cx_set_target_order(self._configuration, target_order)

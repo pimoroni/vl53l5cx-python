@@ -185,7 +185,7 @@ In 8x8 mode the full array is used and the ranging data list will be 64 entries 
 
 In 4x4 mode the array is treated as 4x4 elements, offers a faster update rate and only outputs 16 entries.
 
-```
+```python
 tof.set_resolution(8*8)
 ```
 
@@ -201,9 +201,38 @@ while True:
 
 #### Integration Time
 
+Integration time is the amount of time the sensor takes to perform a single reading. This cannot be greater than the ranging frequency period.
+
+EG: a 15Hz ranging frequency cannot have more than a 66ms integration time.
+
+```python
+tof.set_ranging_frequency(15)
+tof.set_integration_time_ms(66)
+```
+
 #### Sharpener
 
+Signals returned by a target are not clean pulses with sharp edges due to "[veiling glare](https://en.wikipedia.org/wiki/Veiling_glare)". Distances reported in adjacent zones may be affected, almost like the foreground target is blurred.
+
+The sharpener removes some of the signal caused by veiling glare, sharpeneing the foreground target and potentially revealing targets behind it. The default value is 5% and values from 0% to 99% are supported.
+
+```python
+tof.set_sharpener_percent(50)
+```
+
 #### Target Order
+
+TODO: Right now the VL53L5CX driver only seems to support one target, enabling multiple targets results in no data.
+
+If you want to try it, you'll need to change the `VL53L5CX_NB_TARGET_PER_ZONE` value in `setup.py` to `4` (the maximum number of targets) and also change `NB_TARGET_PER_ZONE` in `vl53l5cx_ctypes/__init__.py` before recompiling the library. (You can use `python3 setup.py develop --user` for this.)
+
+Data for multiple targets is simply concatenated onto the end of `signal_per_spad`, `range_sigma_mm`, `distance_mm`, `reflectance` and `target_status`.
+
+Target order controls how detected targets are sorted in the output data. They can be sorted by signal strength (`TARGET_ORDER_STRONGES`) or by distance (`TARGET_ORDER_CLOSEST`), eg:
+
+```python
+tof.set_target_order(TARGET_ORDER_STRONGEST)
+```
 
 ### Motion
 
