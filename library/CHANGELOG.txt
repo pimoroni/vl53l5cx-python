@@ -1,3 +1,9 @@
+0.0.3
+-----
+
+* Rename to vl53l5cx_ctypes to better reflect the differences between this and the pure Python VL53L5CX driver
+* Change package name to avoid conflicts with Python VL53L5CX driver
+
 0.0.2
 -----
 

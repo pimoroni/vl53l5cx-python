@@ -3,7 +3,7 @@
 import sys
 import time
 import argparse
-import vl53l5cx
+import vl53l5cx_ctypes as vl53l5cx
 
 parser = argparse.ArgumentParser(description='Change address options.')
 parser.add_argument('--current', type=lambda x: int(x, 0), help='The current VL53L5CX i2c address.', default=vl53l5cx.DEFAULT_I2C_ADDRESS)

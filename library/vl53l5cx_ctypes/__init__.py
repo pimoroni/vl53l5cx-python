@@ -6,9 +6,11 @@ from smbus2 import SMBus, i2c_msg
 from ctypes import CDLL, CFUNCTYPE, POINTER, Structure, byref, c_int, c_int8, c_uint8, c_int16, c_uint16, c_uint32
 
 
-__version__ = '0.0.2'
+__version__ = '0.0.3'
 
 DEFAULT_I2C_ADDRESS = 0x29
+
+NB_TARGET_PER_ZONE = 1
 
 RESOLUTION_4X4 = 16  # For completeness, feels nicer just to use 4*4
 RESOLUTION_8X8 = 64
@@ -57,7 +59,7 @@ _PATH = pathlib.Path(__file__).parent.parent.absolute()
 _SUFFIX = sysconfig.get_config_var('EXT_SUFFIX')
 
 # Library name
-_NAME = pathlib.Path("vl53l5cx_python").with_suffix(_SUFFIX)
+_NAME = pathlib.Path("vl53l5cx_ctypes").with_suffix(_SUFFIX)
 
 # Load the DLL
 _VL53 = CDLL(_PATH / _NAME)
@@ -81,11 +83,11 @@ class VL53L5CX_ResultsData(Structure):
         ("ambient_per_spad", c_uint32 * 64),
         ("nb_target_detected", c_uint8 * 64),
         ("nb_spads_enabled", c_uint32 * 64),
-        ("signal_per_spad", c_uint32 * 64),
-        ("range_sigma_mm", c_uint16 * 64),
-        ("distance_mm", c_int16 * 64),
-        ("reflectance", c_uint8 * 64),
-        ("target_status", c_uint8 * 64),
+        ("signal_per_spad", c_uint32 * 64 * NB_TARGET_PER_ZONE),
+        ("range_sigma_mm", c_uint16 * 64 * NB_TARGET_PER_ZONE),
+        ("distance_mm", c_int16 * 64 * NB_TARGET_PER_ZONE),
+        ("reflectance", c_uint8 * 64 * NB_TARGET_PER_ZONE),
+        ("target_status", c_uint8 * 64 * NB_TARGET_PER_ZONE),
         ("motion_indicator", VL53L5CX_MotionData)
     ]
 

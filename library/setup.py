@@ -2,8 +2,8 @@ from setuptools import setup, Extension
 
 
 extension = Extension(
-    'vl53l5cx_python',
-    define_macros=[],
+    'vl53l5cx_ctypes',
+    define_macros=[('VL53L5CX_NB_TARGET_PER_ZONE', '1')],
     extra_compile_args=[],
     include_dirs=['.', 'src/VL53L5CX_ULD_API/inc'],
     libraries=[],

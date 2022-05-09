@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import time
-import vl53l5cx
+import vl53l5cx_ctypes as vl53l5cx
 import ST7789
 import numpy
 from PIL import Image

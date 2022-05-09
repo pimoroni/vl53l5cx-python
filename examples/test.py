@@ -1,9 +1,11 @@
 import time
 import numpy
-import vl53l5cx
-from vl53l5cx import STATUS_RANGE_VALID, STATUS_RANGE_VALID_LARGE_PULSE
+import vl53l5cx_ctypes as vl53l5cx
+from vl53l5cx_ctypes import STATUS_RANGE_VALID, STATUS_RANGE_VALID_LARGE_PULSE
 
+print("Uploading firmware, please wait...")
 vl53 = vl53l5cx.VL53L5CX()
+print("Done!")
 vl53.set_resolution(8 * 8)
 vl53.enable_motion_indicator(8 * 8)
 # vl53.set_integration_time_ms(50)
