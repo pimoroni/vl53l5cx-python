@@ -6,7 +6,7 @@ import vl53l5cx_ctypes as vl53l5cx
 from vl53l5cx_ctypes import STATUS_RANGE_VALID, STATUS_RANGE_VALID_LARGE_PULSE
 import numpy
 from scipy import ndimage
-from PIL import Image
+from PIL import Image, ImageDraw
 
 
 # Reflectance threshold (in % estimated signal return) for tracked target
@@ -72,15 +72,19 @@ while True:
         mdist = numpy.nanmean(dfilt)
         y, x = ndimage.center_of_mass(rfilt)
 
+        # Normalise X/Y
+        x /= 7.0
+        y /= 7.0
+
         # Correct X/Y coordinates to center of view
-        x -= 3.5
-        y -= 3.5
+        vx = (x * 2) - 1.0
+        vy = (y * 2) - 1.05
 
         valid = not numpy.isnan(x) and not numpy.isnan(y)
 
         # Print 'em out. Wooohoo!
         if valid:
-            print(f"{x:.02f}, {y:.02f}, {mdist:.02f}")
+            print(f"{vx:.02f}, {vy:.02f}, {mdist:.02f}")
 
         # TODO: Angle to target can be calculated using trig?
         # the distance to target is the hypotenuse (c)
@@ -98,6 +102,16 @@ while True:
         img = Image.frombytes("P", (8, 8), rfilt)
         img = img.convert("RGB")
         img = img.resize((240, 240), resample=Image.NEAREST)
+        draw = ImageDraw.Draw(img)
+
+        if valid:
+            # TODO: maybe display the distance onscreen?
+            ix = int(239 * x)
+            iy = int(239 * y)
+            ix = max(0, min(ix, 239))
+            iy = max(0, min(iy, 239))
+            r = 10
+            draw.ellipse((ix - r, iy - r, ix + r, iy + r), (255, 0, 0))
 
         # Display the result
         display.display(img)
