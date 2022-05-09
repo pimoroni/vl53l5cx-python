@@ -5,7 +5,6 @@ import ST7789
 import vl53l5cx_ctypes as vl53l5cx
 from vl53l5cx_ctypes import STATUS_RANGE_VALID, STATUS_RANGE_VALID_LARGE_PULSE
 import numpy
-from scipy import ndimage
 from PIL import Image, ImageDraw
 
 
@@ -70,15 +69,25 @@ while True:
 
         # Get the mean distance to the target from our collected distance values
         mdist = numpy.nanmean(dfilt)
-        y, x = ndimage.center_of_mass(rfilt)
 
-        # Normalise X/Y
+        # Compute the center of mass along each dimension in turn
+
+        # A 1d range of [0, 1, 2, ...] multiplies along the X axis:
+        x = (rfilt * range(8)).sum()
+        # Normalise by the sum of the source data
+        x /= rfilt.sum()
+        # And finally by the width to give a value from 0 to 1
         x /= 7.0
+
+        # A 2d range of [[0], [1], [2], ...] multiplies along the Y axis:
+        y = (rfilt * [[i] for i in range(8)]).sum()
+        y /= rfilt.sum()
         y /= 7.0
 
         # Correct X/Y coordinates to center of view
+        # This gives a handy range from -1 to 1
         vx = (x * 2) - 1.0
-        vy = (y * 2) - 1.05
+        vy = (y * 2) - 1.0
 
         valid = not numpy.isnan(x) and not numpy.isnan(y)
 
