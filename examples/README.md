@@ -20,6 +20,16 @@ Basic visualisation of 4x4 motion detection at 40cm to 1.4m
 
 Basic visualisation of sensor estimated reflectance.
 
+# Advanced Examples
+
+Practical examples of the sensor as you might use it to drive a robot.
+
+## object_tracking.py
+
+A basic object tracking example which uses threshold based rejection to filter a single, bright target.
+
+Uses scipy to find the target center of mass so that a robot could - potentially - follow a suitable target by turning to center it in the sensor view.
+
 # Other Examples
 
 ## change_i2c_address.py
