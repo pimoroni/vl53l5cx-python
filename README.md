@@ -29,6 +29,7 @@ In some cases you may need to use `sudo` or install pip with: `sudo apt install 
 
 Latest/development library from GitHub:
 
-* `git clone https://github.com/pimoroni/vl53l5cx-python
+* `git clone https://github.com/pimoroni/vl53l5cx-python`
+* `git submodule update --init`
 * `cd vl53l5cx-python/library`
 * `python3 setup.py install --user`
