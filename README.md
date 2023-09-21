@@ -27,9 +27,16 @@ Note: The default baudrate is 200000 (200KHz) and a typical maximum for most dev
 
 In some cases you may need to use `sudo` or install pip with: `sudo apt install python3-pip`
 
+# Ranging frequency
+
+To achieve the maximum of 15 Hz, some data has to be removed from the stream.
+You can do this by forking this wrapper and editing `library/platform.h` and `library/vl53l5cx_ctypes/__init__.py` to your needs.
+Use this fork edit as an example: `https://github.com/pimoroni/vl53l5cx-python/compare/dev...HylkeJellema:vl53l5cx-python-RangeOnly:dev`
+To install your fork, use the instructions below with your repository url.
+
 Latest/development library from GitHub:
 
 * `git clone https://github.com/pimoroni/vl53l5cx-python`
-* `git submodule update --init`
 * `cd vl53l5cx-python/library`
+* `git submodule update --init` 
 * `python3 setup.py install --user`
